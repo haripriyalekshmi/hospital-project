@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Hospital Management System</title>
+      <link rel="stylesheet" href="./patient.css">
+      <style>
+          body {
+              font-family: Arial, Helvetica, sans-serif;
+              padding: 20px;
+          }
+          form {
+              margin-bottom: 20px;
+          }
+          input, select, button {
+              margin: 10px;
+              padding: 10px;
+              width: 200px;
+          }
+          .patientList {
+              margin-top: 20px;
+          }
+          table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+          }
+          th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+          }
+          th {
+              background-color: #f2f2f2;
+          }
+          .edit-button, .delete-button {
+              padding: 5px 10px;
+              margin: 5px;
+              cursor: pointer;
+          }
+          .edit-button {
+              background-color: rgb(43, 226, 131);
+              border: none;
+              color: white;
+          }
+          .delete-button {
+              background-color: #7535dc;
+              border: none;
+              color: white;
+          }
+      </style>
+  </head>
+  
+  <body>
+      <h1>Hospital Management System</h1>
+      <form id="patientform">
+          <input type="text" id="name" placeholder="Name" required>
+          <input type="number" id="age" placeholder="Age" required>
+          <select id="gender" required>
+              <option value="">Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+          </select>
+          <input type="text" id="contact" placeholder="Contact" required>
+          <input type="text" id="disease" placeholder="Disease" required>
+          <button type="submit">Add Patient</button>
+      </form>
+      
+      <div id="patientList">
+          <h1>Patient List</h1>
+          <table>
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Age</th>
+                      <th>Gender</th>
+                      <th>Contact</th>
+                      <th>Disease</th>
+                      <th>Actions</th>
+                  </tr>
+              </thead>
+              <tbody id="patientTableBody">
+              </tbody>
+          </table>
+      </div>
+  
+      <script>
+          const patientForm = document.getElementById('patientform');
+          const patientTableBody = document.getElementById('patientTableBody');
+  
+          let patients = [];
+          let editIndex = -1;
+  
+          patientForm.addEventListener('submit', function(event) {
+              event.preventDefault(); // Prevent form submission
+  
+              const name = document.getElementById('name').value;
+              const age = document.getElementById('age').value;
+              const gender = document.getElementById('gender').value;
+              const contact = document.getElementById('contact').value;
+              const disease = document.getElementById('disease').value;
+  
+              if (editIndex === -1) {
+                  // Adding a new patient
+                  patients.push({ name, age, gender, contact, disease });
+              } else {
+                  // Editing an existing patient
+                  patients[editIndex] = { name, age, gender, contact, disease };
+                  editIndex = -1; // Reset editIndex
+              }
+  
+              // Clear the form
+              patientForm.reset();
+              renderPatientList();
+          });
+  
+          function renderPatientList() {
+              patientTableBody.innerHTML = ''; // Clear the existing table rows
+              patients.forEach((patient, index) => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+                      <td>${patient.name}</td>
+                      <td>${patient.age}</td>
+                      <td>${patient.gender}</td>
+                      <td>${patient.contact}</td>
+                      <td>${patient.disease}</td>
+                      <td>
+                          <button class="edit-button" onclick="editPatient(${index})">Edit</button>
+                          <button class="delete-button" onclick="deletePatient(${index})">Delete</button>
+                      </td>
+                  `;
+                  patientTableBody.appendChild(row);
+              });
+          }
+  
+          function editPatient(index) {
+              const patient = patients[index];
+              document.getElementById('name').value = patient.name;
+              document.getElementById('age').value = patient.age;
+              document.getElementById('gender').value = patient.gender;
+              document.getElementById('contact').value = patient.contact;
+              document.getElementById('disease').value = patient.disease;
+              editIndex = index; // Set editIndex to the current patient
+          }
+  
+          function deletePatient(index) {
+              patients.splice(index, 1); // Remove patient from array
+              renderPatientList(); // Re-render the list
+          }
+      </script>
+  </body>
+  </html>
+  
